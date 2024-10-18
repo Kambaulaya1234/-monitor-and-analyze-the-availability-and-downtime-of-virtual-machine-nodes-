@@ -1,0 +1,26 @@
+SELECT
+    n.Caption AS [Node Name],          -- Display the node's caption
+    n.IPAddress AS [IP Address],       -- Display the node's IP address
+    rt.Availability AS [Availability], -- Availability percentage
+    rt.ObservationTimestamp AS [Observation Time], -- Observation timestamp
+    rt.PercentDown AS [Percent Down], -- Percentage of downtime
+    CASE 
+        WHEN rt.Availability = 0 THEN 'Down'
+        ELSE 'Up'
+    END AS [Status], -- Node status based on availability
+    COUNT(CASE WHEN rt.Availability = 0 THEN 1 ELSE NULL END) AS [Number of Failures] -- Count number of failures (downtime occurrences)
+
+FROM 
+    Orion.ResponseTime rt
+JOIN 
+    Orion.Nodes n ON rt.NodeID = n.NodeID  -- Join the Nodes table to get the node's caption and IP address
+WHERE 
+    n.Caption LIKE 'vm%'  -- Filter based on the node's caption
+    AND rt.ObservationTimestamp BETWEEN '2023-01-01' AND '2023-12-31' -- Reduced date range for testing
+GROUP BY 
+    n.Caption, 
+    n.IPAddress, 
+    rt.Availability, 
+    rt.ObservationTimestamp  -- Add this column to the GROUP BY clause
+ORDER BY 
+    rt.ObservationTimestamp;
