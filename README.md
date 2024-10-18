@@ -1,4 +1,4 @@
-# -monitor-and-analyze-the-availability-and-downtime-of-virtual-machine-nodes-
+#monitor-and-analyze-the-availability-and-downtime-of-virtual-machine-nodes
 The query is designed to help administrators track the availability and failure frequency of virtual machines over time, allowing them to identify which VMs have experienced downtime and how frequently this occurred within the specified time range. It provides visibility into node uptime and downtime patterns.
 The purpose of this SWQL query is to monitor and analyze the availability and downtime of virtual machine nodes in a SolarWinds environment. Specifically, it:
 Identifies Virtual Machine Nodes: Filters nodes whose captions (names) start with "vm", focusing the analysis on virtual machine (VM) nodes.
