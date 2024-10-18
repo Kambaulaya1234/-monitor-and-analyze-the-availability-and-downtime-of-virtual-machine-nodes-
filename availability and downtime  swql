@@ -1,0 +1,35 @@
+The SWQL query you provided is used to analyze the availability and downtime of virtual machine nodes (those whose names start with "vm") within a SolarWinds monitoring environment over a specified date range. Here's a detailed breakdown of each part of the query:
+
+1. SELECT Clause (Columns being retrieved):
+n.Caption AS [Node Name]: Displays the name (caption) of each node (the virtual machine's name).
+n.IPAddress AS [IP Address]: Displays the IP address of each node.
+rt.Availability AS [Availability]: Shows the availability percentage of each node. A value of 100% means the node was fully available, while lower values indicate partial availability.
+rt.ObservationTimestamp AS [Observation Time]: Displays the timestamp when the availability data was recorded.
+rt.PercentDown AS [Percent Down]: Shows the percentage of downtime the node experienced during the observation period.
+Custom Status Column:
+The CASE statement classifies nodes as "Down" if their availability is 0%, otherwise "Up".
+Downtime Failures Count:
+COUNT(CASE WHEN rt.Availability = 0 THEN 1 ELSE NULL END) AS [Number of Failures]: Counts how many times a node's availability was recorded as 0%, i.e., how many times the node experienced a complete failure during the specified period.
+
+2. FROM Clause (Tables involved):
+Orion.ResponseTime rt: This table contains data on node availability and response time.
+JOIN Orion.Nodes n ON rt.NodeID = n.NodeID: The query joins the ResponseTime table with the Nodes table based on the NodeID. This allows the query to retrieve node details such as the node's caption (name) and IP address.
+
+3. WHERE Clause (Filters applied):
+n.Caption LIKE 'vm%': This filter ensures that only nodes whose names start with "vm" (presumably virtual machines) are included in the results.
+rt.ObservationTimestamp BETWEEN '2023-01-01' AND '2023-12-31': Limits the data to availability records between January 1, 2023, and December 31, 2023. This date range can be adjusted as needed.
+
+4. GROUP BY Clause (How the data is grouped):
+The results are grouped by the node’s name, IP address, availability percentage, and observation timestamp. Grouping is used here to ensure that the data for each node and timestamp is uniquely identified when counting the number of failures.
+
+5. ORDER BY Clause (Sorting the results):
+ORDER BY rt.ObservationTimestamp: The results are sorted by the observation timestamp in chronological order. This allows the data to be reviewed over time for each node.
+Purpose of the Query:
+This query is designed to monitor virtual machine nodes' availability and track how often they experience downtime over a specific period (2023). It:
+
+Provides basic node details such as name and IP.
+Displays the availability of each node and whether it was "Up" or "Down" during specific time intervals.
+Counts how many times the node went down (when availability was 0%).
+Shows the percentage of downtime and the exact times when availability data was recorded.
+Use Case:
+System administrators can use this query to monitor the performance and reliability of virtual machines in the network. It helps identify VMs with frequent failures, allowing admins to address underlying issues and improve overall uptime.
